@@ -69,6 +69,7 @@ func linkShow() {
     links, err := netlink.LinkList()
     if err != nil {
         fmt.Println(err)
+        return
     }
     for _, link := range links {
         fmt.Println(link.Attrs())
@@ -79,10 +80,12 @@ func addrAdd(ifaddr string, ifname string) {
     link, err := netlink.LinkByName(ifname)
     if err != nil {
         fmt.Println(err)
+        return
     }
     addr, err := netlink.ParseAddr(ifaddr)
     if err != nil {
         fmt.Println(err)
+        return
     }
     err = netlink.AddrAdd(link, addr)
     if err != nil {
@@ -94,6 +97,7 @@ func routeShow() {
     links, err := netlink.LinkList()
     if err != nil {
         fmt.Println(err)
+        return
     }
     for _, link := range links {
         routes, _ := netlink.RouteList(link, netlink.FAMILY_V4)
@@ -107,6 +111,7 @@ func routeAdd(dst string, gateway string, ifname string, src string) {
     link, err := netlink.LinkByName(ifname)
     if err != nil {
         fmt.Println(err)
+        return
     }
     route := netlink.Route{LinkIndex: link.Attrs().Index}
     if dst != "default" {
@@ -129,7 +134,11 @@ func routeAdd(dst string, gateway string, ifname string, src string) {
 
 func linkSetUp(ifname string) {
     link, err := netlink.LinkByName(ifname)
-    netlink.LinkSetUp(link)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    err = netlink.LinkSetUp(link)
     if err != nil {
         fmt.Println(err)
     }
@@ -137,7 +146,11 @@ func linkSetUp(ifname string) {
 
 func linkSetDown(ifname string) {
     link, err := netlink.LinkByName(ifname)
-    netlink.LinkSetDown(link)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    err = netlink.LinkSetDown(link)
     if err != nil {
         fmt.Println(err)
     }
